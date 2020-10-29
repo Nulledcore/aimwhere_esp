@@ -18,9 +18,9 @@ Move the lua to the CSGO directory and load the lua.
   @api
 
 ## TODO
-    - add scoped check
-    - add (ammo/totalammo) to weapon text
-    - add ammo bar
+    - add scoped check ✅
+    - add (ammo/totalammo) to weapon text ✅
+    - add ammo bar ✅
     - add money esp
 
 ## Contributing
