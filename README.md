@@ -16,6 +16,7 @@ Move the lua to the CSGO directory and load the lua.
 
 ## Credits
   @api
+    - Helping getting image references and colors.
 
 ## TODO
     - add scoped check ✅
