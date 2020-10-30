@@ -4,6 +4,22 @@ More is to come, currently ev0lve, Nullcore, aimware v2 is complete.
 
 -  I’m currently working on **NONE**
 
+## Features
+* Box ESP
+  * Box Outline
+* Health ESP
+  * Bar
+  * Text
+  * Both
+* Name ESP
+* Weapon/ammo ESP
+  * Bar
+  * Text
+  * Both
+* Headspot ESP
+* Xhair
+* IsScoped check
+
 ## Preview
 ![Preview of an ESP style](https://nullified.s-ul.eu/DTmeJfdb)
 
