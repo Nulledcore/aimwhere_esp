@@ -1,17 +1,17 @@
 local surface = require('gamesense/surface')
 local font = surface.create_font("Tahoma", 13, 800, 0x080)
 
-local awhere = {
-    toggle = ui.new_checkbox("lua", "a", "[Aimwhere V2] Enable"),
-    box = ui.new_checkbox("lua", "a", "[Aimwhere V2] Box"),
-    box_outline = ui.new_checkbox("lua", "a", "[Aimwhere V2] Box Outline"),
-    healthstyle = ui.new_combobox("lua", "a", "[Aimwhere V2] Health", {"None", "Bar", "Text", "Both"}),
-    name = ui.new_checkbox("lua", "a", "[Aimwhere V2] Show Name"),
-    weapon = ui.new_combobox("lua", "a", "[Aimwhere V2] Show Weapon + ammo", {"None", "Bar", "Text", "Both"}),
-    headspot = ui.new_checkbox("lua", "a", "[Aimwhere V2] Headspot"),
-    chams_team_check = ui.new_checkbox("lua", "a", "[Aimwhere V2] Team Chams"),
-    xhair = ui.new_checkbox("lua", "a", "[Aimwhere V2] Xhair"),
-    conditions = ui.new_checkbox("lua", "a", "[Aimwhere V2] Scoped condition"),
+local aw = {
+    toggle = ui.new_checkbox("lua", "a", "[AW] Enable"),
+    box = ui.new_checkbox("lua", "a", "[AW] Box"),
+    box_outline = ui.new_checkbox("lua", "a", "[AW] Box Outline"),
+    healthstyle = ui.new_combobox("lua", "a", "[AW] Health", {"None", "Bar", "Number", "Both"}),
+    name = ui.new_checkbox("lua", "a", "[AW] Show Name"),
+    weapon = ui.new_combobox("lua", "a", "[AW] Show Weapon + ammo", {"None", "Bar", "Number", "Both"}),
+    headspot = ui.new_checkbox("lua", "a", "[AW] Headspot"),
+    chams_team_check = ui.new_checkbox("lua", "a", "[AW] Team Chams"),
+    xhair = ui.new_checkbox("lua", "a", "[AW] Xhair"),
+    conditions = ui.new_checkbox("lua", "a", "[AW] Scoped condition"),
 }
 
 local weapons = {
@@ -201,8 +201,8 @@ local function team_check(enemy)
 end
 
 local function draw_main_esp()
-    if not ui.get(awhere.toggle) then return end
-    if ui.get(awhere.xhair) then
+    if not ui.get(aw.toggle) then return end
+    if ui.get(aw.xhair) then
         local x,y = client.screen_size()
         renderer.rectangle(x/2-1, y/2, 1, 15, 255, 0, 0, 255)
         renderer.rectangle(x/2-1, y/2-15, 1, 25, 255, 0, 0, 255)
@@ -226,16 +226,16 @@ local function draw_main_esp()
             local bbox = {entity.get_bounding_box(enemy)}
             if bbox[1] ~= nil or bbox[2] ~= nil or bbox[3] ~= nil or bbox[4] ~= nil or bbox[5] ~= 0 then
                 local height, width = bbox[4]-bbox[2], bbox[3]-bbox[1]
-                if ui.get(awhere.box) then
+                if ui.get(aw.box) then
                     local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or team_check(enemy)
                     surface.draw_outlined_rect(bbox[1], bbox[2], width, height, color[1], color[2], color[3], 255)
-                    if ui.get(awhere.box_outline) then
+                    if ui.get(aw.box_outline) then
                         surface.draw_outlined_rect(bbox[1]-1, bbox[2]-1, width+2, height+2, 0,0,0,175)
                         surface.draw_outlined_rect(bbox[1]+1, bbox[2]+1, width-2, height-2, 0,0,0,175)
                     end
                 end
 
-                if ui.get(awhere.headspot) then
+                if ui.get(aw.headspot) then
                     local head_spot = {entity.hitbox_position(enemy, 0)}
                     local x,y = renderer.world_to_screen(head_spot[1], head_spot[2], head_spot[3])
                     if x == nil or y == nil then return end
@@ -244,7 +244,7 @@ local function draw_main_esp()
                     renderer.rectangle(x, y, 3, 3, color[1], color[2], color[3], color[4])
                 end
 
-                if ui.get(awhere.chams_team_check) then -- I was lazy to write another method lol
+                if ui.get(aw.chams_team_check) then -- I was lazy to write another method lol
                     local _, vis_cham_clr = ui.reference("visuals", "colored models", "player")
                     local _, invis_cham_clr = ui.reference("visuals", "colored models", "player behind wall")
                     local return_vis_clr
@@ -260,29 +260,29 @@ local function draw_main_esp()
                     ui.set(invis_cham_clr, return_invis_clr[1], return_invis_clr[2], return_invis_clr[3], return_invis_clr[4])
                 end
 
-                if ui.get(awhere.healthstyle) then
+                if ui.get(aw.healthstyle) then
                     local health = entity.get_prop(enemy, "m_iHealth")
                     local h, s, v = lerp(0, 1, 1, 120, 1, 1, health*0.01)
                     local hr, hg, hb = HSVToRGB(h/360, s, v)
                     local health_color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {hr, hg, hb, 255}
-                    if ui.get(awhere.healthstyle) == "Bar" or ui.get(awhere.healthstyle) == "Both" then
+                    if ui.get(aw.healthstyle) == "Bar" or ui.get(aw.healthstyle) == "Both" then
                         renderer.rectangle(bbox[1]-6, bbox[2]-1, 4, height+2, 17, 17, 17, 175)
                         renderer.rectangle(bbox[1]-5, bbox[2]+height, 2, -(height*health/100), health_color[1], health_color[2], health_color[3], 255)
                     end
-                    if ui.get(awhere.healthstyle) == "Text" or ui.get(awhere.healthstyle) == "Both" then
+                    if ui.get(aw.healthstyle) == "Number" or ui.get(aw.healthstyle) == "Both" then
                         local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 255, 255}
-                        surface.draw_text(bbox[1]-(ui.get(awhere.healthstyle) == "Both" and (health < 99 and (health < 10 and 34 or 40) or 48) or (health < 99 and (health < 10 and 28 or 34) or 42)), bbox[2], color[1], color[2], color[3], 255, font, string.format("%s HP", health))
+                        surface.draw_text(bbox[1]-(ui.get(aw.healthstyle) == "Both" and (health < 99 and (health < 10 and 34 or 40) or 48) or (health < 99 and (health < 10 and 28 or 34) or 42)), bbox[2], color[1], color[2], color[3], 255, font, string.format("%s HP", health))
                     end
                 end
 
-                if ui.get(awhere.conditions) then
+                if ui.get(aw.conditions) then
                     if entity.get_prop(enemy, "m_bIsScoped") ~= 0 then
                         local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
                         local wide, tall = surface.get_text_size(font, "Scoped")
-                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(awhere.name) and 28 or 16), color[1], color[2], color[3], 255, font, "Scoped")
+                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and 28 or 16), color[1], color[2], color[3], 255, font, "Scoped")
                     end
                 end
-                if ui.get(awhere.name) then
+                if ui.get(aw.name) then
                     local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 255, 255}
                     local name = entity.get_player_name(enemy)
                     if name == nil then return end
@@ -293,7 +293,7 @@ local function draw_main_esp()
                     surface.draw_text(bbox[1] - wide / 2 + (width/2), bbox[2]-16, color[1], color[2], color[3], 255, font, name)
                 end
 
-                if ui.get(awhere.weapon) then
+                if ui.get(aw.weapon) then
                     local weapon_id = entity.get_prop(enemy, "m_hActiveWeapon")
                     if entity.get_prop(weapon_id, "m_iItemDefinitionIndex") ~= nil then
                         weapon_item_index = bit.band(entity.get_prop(weapon_id, "m_iItemDefinitionIndex"), 0xFFFF)
@@ -303,7 +303,7 @@ local function draw_main_esp()
                     local current_ammo = entity.get_prop(enemy_weapon, "m_iClip1") or -1
                     local total_ammo = entity.get_prop(enemy_weapon, "m_iPrimaryReserveAmmoCount") or 0
 
-                    if ui.get(awhere.weapon) == "Text" or ui.get(awhere.weapon) == "Both" then
+                    if ui.get(aw.weapon) == "Number" or ui.get(aw.weapon) == "Both" then
                         local weapon_name = weapons[weapon_item_index]
                         if weapon_name == nil then return end
                         local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 255, 255}
@@ -313,15 +313,15 @@ local function draw_main_esp()
 
                         if (weapon_item_index == 31 or weapon_item_index == 41 or weapon_item_index == 42 or weapon_item_index == 43 or weapon_item_index == 44 or weapon_item_index == 45 or weapon_item_index == 46 or weapon_item_index == 47 or weapon_item_index == 48 or weapon_item_index == 49 or weapon_item_index == 59 or weapon_item_index >= 500) then
                             local wide, tall = surface.get_text_size(font, weapon_name:lower())
-                            surface.draw_text(bbox[1] - wide / 2 + (width/2), bbox[4]+(ui.get(awhere.weapon) == "Both" and ((weapon_item_index == 31 or weapon_item_index == 41 or weapon_item_index == 42 or weapon_item_index == 43 or weapon_item_index == 44 or weapon_item_index == 45 or weapon_item_index == 46 or weapon_item_index == 47 or weapon_item_index == 48 or weapon_item_index == 49 or weapon_item_index == 59 or weapon_item_index >= 500) and 2 or 6) or 2), color[1], color[2], color[3], 255, font, weapon_name:lower())
+                            surface.draw_text(bbox[1] - wide / 2 + (width/2), bbox[4]+(ui.get(aw.weapon) == "Both" and ((weapon_item_index == 31 or weapon_item_index == 41 or weapon_item_index == 42 or weapon_item_index == 43 or weapon_item_index == 44 or weapon_item_index == 45 or weapon_item_index == 46 or weapon_item_index == 47 or weapon_item_index == 48 or weapon_item_index == 49 or weapon_item_index == 59 or weapon_item_index >= 500) and 2 or 6) or 2), color[1], color[2], color[3], 255, font, weapon_name:lower())
                         else
                             local wide, tall = surface.get_text_size(font, string.format("%s (%s/%s)", weapon_name:lower(), current_ammo, total_ammo))
-                            surface.draw_text(bbox[1] - wide / 2 + (width/2), bbox[4]+(ui.get(awhere.weapon) == "Both" and 6 or 2), color[1], color[2], color[3], 255, font, string.format("%s (%s/%s)", weapon_name:lower(), current_ammo, total_ammo))
+                            surface.draw_text(bbox[1] - wide / 2 + (width/2), bbox[4]+(ui.get(aw.weapon) == "Both" and 6 or 2), color[1], color[2], color[3], 255, font, string.format("%s (%s/%s)", weapon_name:lower(), current_ammo, total_ammo))
                         end
     
                     end
                 
-                    if ui.get(awhere.weapon) == "Bar" or ui.get(awhere.weapon) == "Both" then
+                    if ui.get(aw.weapon) == "Bar" or ui.get(aw.weapon) == "Both" then
                         if not (weapon_item_index == 31 or weapon_item_index == 41 or weapon_item_index == 42 or weapon_item_index == 43 or weapon_item_index == 44 or weapon_item_index == 45 or weapon_item_index == 46 or weapon_item_index == 47 or weapon_item_index == 48 or weapon_item_index == 49 or weapon_item_index == 59 or weapon_item_index >= 500) then
                             local max_ammo = ammo[weapon_item_index] or 0
                             local ammo_percentage = math.min(1, max_ammo == 0 and 1 or current_ammo/max_ammo)
