@@ -1,4 +1,4 @@
-# aimware.net V1 ESP
+# aimware.net ESP
 This ESP is based off aimware's ESP from ~2016.
 More is to come, currently ev0lve, Nullcore, aimware v2 is complete.
 
