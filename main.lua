@@ -57,7 +57,7 @@ local weapons = {
     [49] = "C4",
     [59] = "Knife t",
     [60] = "M4a1 silencer",
-    [61] = "Usp silenced",
+    [61] = "Usp silencer",
     [63] = "CZ75auto",
     [64] = "Revolver",
     [500] = "knife Bayonet",
@@ -72,7 +72,7 @@ local weapons = {
     [516] = "knife Shadow Daggers",
     [519] = "knife Ursus Knife",
     [520] = "knife Navaja Knife",
-    [522] = "knife Siletto Knife",
+    [522] = "knife Stiletto Knife",
     [523] = "knife Talon Knife",
 }
 
