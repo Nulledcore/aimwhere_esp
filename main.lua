@@ -11,7 +11,7 @@ local aw = {
     headspot = ui.new_checkbox("lua", "a", "[AW] Headspot"),
     chams_team_check = ui.new_checkbox("lua", "a", "[AW] Team Chams"),
     xhair = ui.new_checkbox("lua", "a", "[AW] Xhair"),
-    conditions = ui.new_checkbox("lua", "a", "[AW] Scoped condition"),
+    conditions = ui.new_checkbox("lua", "a", "[AW] Flags (defuse/scope)"),
 }
 
 local weapons = {
@@ -280,6 +280,11 @@ local function draw_main_esp()
                         local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
                         local wide, tall = surface.get_text_size(font, "Scoped")
                         surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and 28 or 16), color[1], color[2], color[3], 255, font, "Scoped")
+                    end
+                    if entity.get_prop(enemy, "m_bIsDefusing") ~= 0 then
+                        local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
+                        local wide, tall = surface.get_text_size(font, "Defusing")
+                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and (entity.get_prop(enemy, "m_bIsScoped") ~= 0 and 40 or 28) or (entity.get_prop(enemy, "m_bIsScoped") ~= 28 and 16)), color[1], color[2], color[3], 255, font, "Defusing")
                     end
                 end
                 if ui.get(aw.name) then
