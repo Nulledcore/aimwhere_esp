@@ -11,7 +11,7 @@ local aw = {
     headspot = ui.new_checkbox("lua", "a", "[AW] Headspot"),
     chams_team_check = ui.new_checkbox("lua", "a", "[AW] Team Chams"),
     xhair = ui.new_checkbox("lua", "a", "[AW] Xhair"),
-    conditions = ui.new_checkbox("lua", "a", "[AW] Flags (defuse/scope)"),
+    conditions = ui.new_checkbox("lua", "a", "[AW] Flags (defuse/scope/reloading/C4)"),
 }
 
 local weapons = {
@@ -226,6 +226,16 @@ local function draw_main_esp()
             local bbox = {entity.get_bounding_box(enemy)}
             if bbox[1] ~= nil or bbox[2] ~= nil or bbox[3] ~= nil or bbox[4] ~= nil or bbox[5] ~= 0 then
                 local height, width = bbox[4]-bbox[2], bbox[3]-bbox[1]
+                local enemy_weapon = entity.get_player_weapon(enemy)
+                local current_ammo = entity.get_prop(enemy_weapon, "m_iClip1") or -1
+                local total_ammo = entity.get_prop(enemy_weapon, "m_iPrimaryReserveAmmoCount") or 0
+                local max_ammo = ammo[weapon_item_index] or 0
+                local ammo_percentage = math.min(1, max_ammo == 0 and 1 or current_ammo/max_ammo)
+                local bar_width = width * ammo_percentage
+                local bar_height = height * ammo_percentage
+
+
+
                 if ui.get(aw.box) then
                     local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or team_check(enemy)
                     surface.draw_outlined_rect(bbox[1], bbox[2], width, height, color[1], color[2], color[3], 255)
@@ -278,14 +288,27 @@ local function draw_main_esp()
                 if ui.get(aw.conditions) then
                     if entity.get_prop(enemy, "m_bIsScoped") ~= 0 then
                         local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
-                        local wide, tall = surface.get_text_size(font, "Scoped")
-                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and 28 or 16), color[1], color[2], color[3], 255, font, "Scoped")
+                        local wide, tall = surface.get_text_size(font, "Is Scoped")
+                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and 28 or 16), color[1], color[2], color[3], 255, font, "Is Scoped")
                     end
                     if entity.get_prop(enemy, "m_bIsDefusing") ~= 0 then
                         local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
-                        local wide, tall = surface.get_text_size(font, "Defusing")
-                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and (entity.get_prop(enemy, "m_bIsScoped") ~= 0 and 40 or 28) or (entity.get_prop(enemy, "m_bIsScoped") ~= 28 and 16)), color[1], color[2], color[3], 255, font, "Defusing")
+                        local wide, tall = surface.get_text_size(font, "Is Defusing")
+                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and (entity.get_prop(enemy, "m_bIsScoped") ~= 0 and 40 or 28) or (entity.get_prop(enemy, "m_bIsScoped") ~= 28 and 16)), color[1], color[2], color[3], 255, font, "Is Defusing")
                     end
+                    if ammo_percentage == 0 then
+                        local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
+                        local wide, tall = surface.get_text_size(font, "Is Reloading")
+                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and (entity.get_prop(enemy, "m_bIsDefusing") ~= 0 and 40 or 28) or (entity.get_prop(enemy, "m_bIsDefusing") ~= 28 and 16)), color[1], color[2], color[3], 255, font, "Is Reloading")
+                    end
+
+                    
+                    if entity.get_prop(entity.get_player_resource(), "m_iPlayerC4", enemy) == enemy then
+                        local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
+                        local wide, tall = surface.get_text_size(font, "Has C4")
+                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[4]+tall+(ui.get(aw.weapon) == "Both" and 6 or 2), color[1], color[2], color[3], 255, font, "Has C4")
+                    end
+
                 end
                 if ui.get(aw.name) then
                     local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 255, 255}
@@ -304,10 +327,6 @@ local function draw_main_esp()
                         weapon_item_index = bit.band(entity.get_prop(weapon_id, "m_iItemDefinitionIndex"), 0xFFFF)
                     end
                     
-                    local enemy_weapon = entity.get_player_weapon(enemy)
-                    local current_ammo = entity.get_prop(enemy_weapon, "m_iClip1") or -1
-                    local total_ammo = entity.get_prop(enemy_weapon, "m_iPrimaryReserveAmmoCount") or 0
-
                     if ui.get(aw.weapon) == "Number" or ui.get(aw.weapon) == "Both" then
                         local weapon_name = weapons[weapon_item_index]
                         if weapon_name == nil then return end
@@ -328,10 +347,6 @@ local function draw_main_esp()
                 
                     if ui.get(aw.weapon) == "Bar" or ui.get(aw.weapon) == "Both" then
                         if not (weapon_item_index == 31 or weapon_item_index == 41 or weapon_item_index == 42 or weapon_item_index == 43 or weapon_item_index == 44 or weapon_item_index == 45 or weapon_item_index == 46 or weapon_item_index == 47 or weapon_item_index == 48 or weapon_item_index == 49 or weapon_item_index == 59 or weapon_item_index >= 500) then
-                            local max_ammo = ammo[weapon_item_index] or 0
-                            local ammo_percentage = math.min(1, max_ammo == 0 and 1 or current_ammo/max_ammo)
-                            local bar_width = width * ammo_percentage
-                            local bar_height = height * ammo_percentage
                             local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {0, 150, 255, 255}
                             renderer.rectangle(bbox[1]-1, bbox[4]+2, width+2, 4, 0, 0, 0, 175)
                             renderer.rectangle(bbox[1], bbox[4]+3, bar_width, 2, color[1], color[2], color[3], 255)
