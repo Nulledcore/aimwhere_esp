@@ -288,18 +288,18 @@ local function draw_main_esp()
                 if ui.get(aw.conditions) then
                     if entity.get_prop(enemy, "m_bIsScoped") ~= 0 then
                         local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
-                        local wide, tall = surface.get_text_size(font, "Is Scoped")
-                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and 28 or 16), color[1], color[2], color[3], 255, font, "Is Scoped")
+                        local wide, tall = surface.get_text_size(font, "Scoped")
+                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and 28 or 16), color[1], color[2], color[3], 255, font, "Scoped")
                     end
                     if entity.get_prop(enemy, "m_bIsDefusing") ~= 0 then
                         local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
-                        local wide, tall = surface.get_text_size(font, "Is Defusing")
-                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and (entity.get_prop(enemy, "m_bIsScoped") ~= 0 and 40 or 28) or (entity.get_prop(enemy, "m_bIsScoped") ~= 28 and 16)), color[1], color[2], color[3], 255, font, "Is Defusing")
+                        local wide, tall = surface.get_text_size(font, "Defusing")
+                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and (entity.get_prop(enemy, "m_bIsScoped") ~= 0 and 40 or 28) or (entity.get_prop(enemy, "m_bIsScoped") ~= 28 and 16)), color[1], color[2], color[3], 255, font, "Defusing")
                     end
                     if ammo_percentage == 0 then
                         local color = entity.is_dormant(enemy) and {100, 100, 100, 255} or {255, 255, 0, 255}
-                        local wide, tall = surface.get_text_size(font, "Is Reloading")
-                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and (entity.get_prop(enemy, "m_bIsDefusing") ~= 0 and 40 or 28) or (entity.get_prop(enemy, "m_bIsDefusing") ~= 28 and 16)), color[1], color[2], color[3], 255, font, "Is Reloading")
+                        local wide, tall = surface.get_text_size(font, "Reloading")
+                        surface.draw_text(bbox[1] + (width/2)-wide/2, bbox[2]-(ui.get(aw.name) and (entity.get_prop(enemy, "m_bIsDefusing") ~= 0 and 40 or 28) or (entity.get_prop(enemy, "m_bIsDefusing") ~= 28 and 16)), color[1], color[2], color[3], 255, font, "Reloading")
                     end
 
                     
